@@ -1,4 +1,4 @@
-.PHONY: all build test clean install setupdb
+.PHONY: all build test clean install release setupdb
 
 BINARY_DIR=bin
 DB_DIR=db
@@ -16,9 +16,16 @@ test:
 clean:
 	rm -rf $(BINARY_DIR)
 
+# Install the prebuilt local binaries into ~/go/bin (respects GOBIN).
 install: build
-	cp $(BINARY_DIR)/fuse /usr/local/bin/
-	cp $(BINARY_DIR)/fuse-getdb /usr/local/bin/
+	@mkdir -p "$${GOBIN:-$$HOME/go/bin}"
+	cp $(BINARY_DIR)/fuse $${GOBIN:-$$HOME/go/bin}/fuse
+	cp $(BINARY_DIR)/fuse-getdb $${GOBIN:-$$HOME/go/bin}/fuse-getdb
+
+# Cross-compile and upload multi-platform binaries to a GitHub Release.
+# Requires GoReleaser (https://goreleaser.com): `brew install goreleaser`.
+release:
+	goreleaser release --clean
 
 setupdb: build
 	$(BINARY_DIR)/fuse --setupdb --datadir $(DB_DIR)

@@ -25,47 +25,75 @@ This is a Go reimplementation of [ABRicate](https://github.com/tseemann/abricate
 
 ## Installation
 
+Installing the pre-compiled binary is the easiest option. For this fuse to work, make sure you have
+the NCBI BLAST+ tools on your `PATH` (see [Requirements](#requirements)).
+
+### 1. Binary release (recommended)
+
+Download the archive for your OS and architecture from the
+[Releases](https://github.com/famiji/fuse/releases) page. For example, on Linux x86-64:
+
 ```bash
-# Build from source
-make build
+# Download and unpack
+wget https://github.com/famiji/fuse/releases/download/v1.0.0/fuse_1.0.0_Linux_x86_64.tar.gz
+tar xzf fuse_1.0.0_Linux_x86_64.tar.gz
+
+# Put the binaries on your PATH
+sudo install fuse fuse-getdb /usr/local/bin/
+```
+
+### 2. From source with `go install`
+
+```bash
+go install github.com/fmj/fuse/cmd/fuse@v1.0.0
+go install github.com/fmj/fuse/cmd/fuse-getdb@v1.0.0
+```
+
+This puts `fuse` and `fuse-getdb` into `$(go env GOPATH)/bin`.
+
+### 3. From source with `make`
+
+```bash
+make build       # compile both binaries into ./bin/
+make install     # copy them into ~/go/bin
 ```
 
 ## Setup
 
 ```bash
 # Format all BLAST databases
-./bin/fuse --setupdb --datadir db
+fuse --setupdb --datadir db
 
 # List available databases
-./bin/fuse --list --datadir db
+fuse --list --datadir db
 ```
 
 ## Usage
 
 ```bash
 # Run on a single file
-./bin/fuse --datadir db assembly.fa
+fuse --datadir db assembly.fa
 
 # Run on multiple files, 4 at a time (recommended for many inputs)
-./bin/fuse --datadir db --jobs 4 assembly1.fa assembly2.fa assembly3.fa assembly4.fa
+fuse --datadir db --jobs 4 assembly1.fa assembly2.fa assembly3.fa assembly4.fa
 
 # Use a specific database
-./bin/fuse --datadir db --db card assembly.fa
+fuse --datadir db --db card assembly.fa
 
 # Quiet mode (no stderr messages)
-./bin/fuse --datadir db --quiet assembly.fa
+fuse --datadir db --quiet assembly.fa
 
 # CSV output
-./bin/fuse --datadir db --csv assembly.fa
+fuse --datadir db --csv assembly.fa
 
 # File of filenames
-./bin/fuse --datadir db --fofn filelist.txt
+fuse --datadir db --fofn filelist.txt
 
 # Summary table
-./bin/fuse --summary sample1.tab sample2.tab
+fuse --summary sample1.tab sample2.tab
 
 # Download/update databases
-./bin/fuse-getdb --dbdir db --db ncbi
+fuse-getdb --dbdir db --db ncbi
 ```
 
 ## Options

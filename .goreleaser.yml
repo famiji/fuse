@@ -1,0 +1,80 @@
+# GoReleaser configuration for Fuse.
+# Cross-compiles both binaries for multiple OS/architectures
+# and uploads them as assets to the GitHub Release.
+version: 2
+
+project_name: fuse
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: fuse
+    main: ./cmd/fuse
+    binary: fuse
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+    goos:
+      - linux
+      - darwin
+      - windows
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+      - goos: freebsd
+        goarch: arm64
+
+  - id: fuse-getdb
+    main: ./cmd/fuse-getdb
+    binary: fuse-getdb
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+    goos:
+      - linux
+      - darwin
+      - windows
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+      - goos: freebsd
+        goarch: arm64
+
+archives:
+  - id: default
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64{{- else }}{{ .Arch }}{{- end }}
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+release:
+  # Reuse the existing v1.0.0 release instead of creating a new tag.
+  mode: keep-existing

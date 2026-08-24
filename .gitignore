@@ -2,6 +2,9 @@
 bin/
 *.exe
 
+# GoReleaser build artifacts
+dist/
+
 # Third-party downloads
 third-party/
 
