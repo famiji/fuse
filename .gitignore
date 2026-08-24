@@ -1,0 +1,18 @@
+# Binaries
+bin/
+*.exe
+
+# Third-party downloads
+third-party/
+
+# Databases (rebuilt via fuse-getdb / setupdb)
+db/
+
+# Reference copy of the original ABRicate (not part of the source)
+abricate-original/
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
