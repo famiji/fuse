@@ -18,44 +18,58 @@ This is a Go reimplementation of [ABRicate](https://github.com/tseemann/abricate
 
 ## Requirements
 
-- Go 1.21+ (for building from source)
-- **NCBI BLAST+** installed and on `PATH` (`blastn`, `blastx`, `makeblastdb`, `blastdbcmd`). If missing, `fuse` reports an error and exits. Install from the NCBI FTP site or your package manager (e.g. `brew install blast` / `conda install -c bioconda blast`).
-- `gzip`, `unzip` (for compressed files)
-- `any2fasta` is optional (built-in FASTA/GenBank/EMBL parsers handle most cases)
+You only need **NCBI BLAST+** on your `PATH`. `fuse` checks for
+`blastn`, `blastx`, `makeblastdb` and `blastdbcmd` at startup and exits with an error if any is
+missing. Install it with Homebrew (`brew install blast`) or bioconda (`conda install -c bioconda blast`).
+
+- Go 1.21+ is only needed if you build from source (see below).
 
 ## Installation
 
-Installing the pre-compiled binary is the easiest option. For this fuse to work, make sure you have
-the NCBI BLAST+ tools on your `PATH` (see [Requirements](#requirements)).
+Choose any one of these three ways. The precompiled binary is the easiest.
 
-### 1. Binary release (recommended)
+### 1. Download a precompiled binary (recommended)
 
-Download the archive for your OS and architecture from the
-[Releases](https://github.com/famiji/fuse/releases) page. For example, on Linux x86-64:
+Go to the [Releases](https://github.com/famiji/fuse/releases) page and download the archive that
+matches your OS and chip (for example `fuse_1.0.0_Linux_x86_64.tar.gz`). Unpack it and run:
 
 ```bash
-# Download and unpack
-wget https://github.com/famiji/fuse/releases/download/v1.0.0/fuse_1.0.0_Linux_x86_64.tar.gz
 tar xzf fuse_1.0.0_Linux_x86_64.tar.gz
-
-# Put the binaries on your PATH
-sudo install fuse fuse-getdb /usr/local/bin/
+./fuse --version
 ```
 
-### 2. From source with `go install`
+To call `fuse` from anywhere, move the two binaries into a directory that is already on your
+`PATH`, e.g. on Linux/macOS:
+
+```bash
+sudo mv fuse fuse-getdb /usr/local/bin/
+```
+
+### 2. Install with `go install`
+
+If you have Go 1.21+ installed, this compiles and installs the binaries in one step:
 
 ```bash
 go install github.com/fmj/fuse/cmd/fuse@v1.0.0
 go install github.com/fmj/fuse/cmd/fuse-getdb@v1.0.0
 ```
 
-This puts `fuse` and `fuse-getdb` into `$(go env GOPATH)/bin`.
+This puts `fuse` and `fuse-getdb` into `$(go env GOPATH)/bin` (make sure that directory is on
+your `PATH`).
 
-### 3. From source with `make`
+### 3. Build from source with `make`
+
+For developers: first install Go 1.21+, then build the binaries into `./bin/`:
 
 ```bash
-make build       # compile both binaries into ./bin/
-make install     # copy them into ~/go/bin
+make build     # compiles both binaries into ./bin/
+./bin/fuse --version
+```
+
+(Optional) To make the binaries available on your `PATH`, copy them into your Go bin directory:
+
+```bash
+make install   # copies ./bin/fuse and ./bin/fuse-getdb into ~/go/bin
 ```
 
 ## Setup
