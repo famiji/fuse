@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 )
 
@@ -109,7 +109,7 @@ func Generate(filenames []string, opts Options, w *bufio.Writer) error {
 	for g := range geneSet {
 		genes = append(genes, g)
 	}
-	sort.Strings(genes)
+	slices.Sort(genes)
 
 	// Print header
 	outHeader := []string{"#FILE", "NUM_FOUND"}
@@ -121,7 +121,7 @@ func Generate(filenames []string, opts Options, w *bufio.Writer) error {
 	for f := range data {
 		fileNames = append(fileNames, f)
 	}
-	sort.Strings(fileNames)
+	slices.Sort(fileNames)
 
 	for _, fname := range fileNames {
 		var present []string

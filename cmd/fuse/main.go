@@ -4,13 +4,12 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
+	"slices"
 	"strings"
 	"sync"
 
@@ -94,8 +93,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	validOutfmt := map[string]bool{"tsv": true, "csv": true, "bed": true, "gff": true, "json": true}
-	if !validOutfmt[outfmt] {
+	outfmts := []string{"tsv", "csv", "bed", "gff", "json"}
+	if !slices.Contains(outfmts, outfmt) {
 		fmt.Fprintf(os.Stderr, "ERROR: Invalid --outfmt '%s' (need: tsv csv bed gff json)\n", outfmt)
 		os.Exit(1)
 	}
@@ -225,10 +224,7 @@ func main() {
 	results := make([]fileResult, len(args))
 
 	// Cap jobs at the number of files to avoid spawning idle workers.
-	njobs := jobs
-	if njobs > len(args) {
-		njobs = len(args)
-	}
+	njobs := min(jobs, len(args))
 
 	var wg sync.WaitGroup
 	indexCh := make(chan int)
@@ -367,7 +363,3 @@ func printUsage() {
 	flag.CommandLine.SetOutput(os.Stderr)
 	flag.PrintDefaults()
 }
-
-// Suppress unused import warnings
-var _ = bytes.NewBuffer
-var _ = runtime.NumCPU

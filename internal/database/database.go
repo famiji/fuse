@@ -3,12 +3,13 @@
 package database
 
 import (
+	"cmp"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"sort"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -110,8 +111,8 @@ func ListDatabases(dataDir string) ([]DBInfo, error) {
 		info.Path = seqPath
 		dbs = append(dbs, *info)
 	}
-	sort.Slice(dbs, func(i, j int) bool {
-		return dbs[i].Name < dbs[j].Name
+	slices.SortFunc(dbs, func(a, b DBInfo) int {
+		return cmp.Compare(a.Name, b.Name)
 	})
 	return dbs, nil
 }

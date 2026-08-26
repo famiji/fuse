@@ -2,9 +2,10 @@
 package report
 
 import (
+	"cmp"
 	"fmt"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -171,11 +172,11 @@ func FormatHeader(sep string) string {
 
 // SortResults sorts results by sequence name and start position.
 func SortResults(results []Result) {
-	sort.Slice(results, func(i, j int) bool {
-		if results[i].Sequence != results[j].Sequence {
-			return results[i].Sequence < results[j].Sequence
+	slices.SortFunc(results, func(a, b Result) int {
+		if c := cmp.Compare(a.Sequence, b.Sequence); c != 0 {
+			return c
 		}
-		return results[i].Start < results[j].Start
+		return cmp.Compare(a.Start, b.Start)
 	})
 }
 

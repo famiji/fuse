@@ -4,6 +4,7 @@ package getdb
 import (
 	"archive/tar"
 	"archive/zip"
+	"cmp"
 	"compress/bzip2"
 	"compress/gzip"
 	"encoding/json"
@@ -13,7 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/fmj/fuse/internal/fasta"
@@ -65,7 +66,7 @@ func AvailableDatabases() string {
 	for name := range databaseRegistry {
 		names = append(names, name)
 	}
-	sort.Strings(names)
+	slices.Sort(names)
 	return strings.Join(names, " ")
 }
 
@@ -90,8 +91,8 @@ func DownloadDB(name, dir string, force bool) error {
 	seqs = dedupeSeq(seqs)
 
 	// Sort by ID
-	sort.Slice(seqs, func(i, j int) bool {
-		return seqs[i].ID < seqs[j].ID
+	slices.SortFunc(seqs, func(a, b SeqRecord) int {
+		return cmp.Compare(a.ID, b.ID)
 	})
 
 	// Save FASTA
@@ -168,9 +169,8 @@ func saveFasta(path string, seqs []SeqRecord, dbName string) error {
 	for _, s := range seqs {
 		abx := ""
 		if len(s.ABX) > 0 {
-			sorted := make([]string, len(s.ABX))
-			copy(sorted, s.ABX)
-			sort.Strings(sorted)
+			sorted := slices.Clone(s.ABX)
+			slices.Sort(sorted)
 			abx = strings.Join(sorted, ABXSep)
 			abx = strings.ReplaceAll(abx, " ", "_")
 		}
